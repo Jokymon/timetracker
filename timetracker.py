@@ -163,7 +163,8 @@ class TimelogUi:
             self.log_activity(selection[1], details, ts)
 
     def test(self):
-        report = self.tdb.month_report( 2011, 10 )
+        now = datetime.datetime.now()
+        report = self.tdb.month_report( now.year, now.month )
         for (d, r) in report:
             print "\r"
             print "---------------------------------------\r"
