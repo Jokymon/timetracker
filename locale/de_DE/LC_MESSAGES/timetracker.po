@@ -1,0 +1,65 @@
+# Timetracker german translation
+# Copyright (C) 2011
+# Silvan Wegmann <swegmann@narf.ch>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2011-10-31 15:58+WEST\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=latin-1\n"
+"Content-Transfer-Encoding: latin-1\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: timetracker.py:55
+msgid "New activity: "
+msgstr "Neue Aktivität: "
+
+#: timetracker.py:65
+msgid "Known activities:"
+msgstr "Bekannte Aktivitäten:"
+
+#: timetracker.py:97
+msgid "Switch to new activity"
+msgstr "Neue Aktivität einstempeln"
+
+#: timetracker.py:100 timetracker.py:107
+msgid "Details: "
+msgstr "Genauere Angaben: "
+
+#: timetracker.py:104
+msgid "Log an activity with a specified start time"
+msgstr "Aktivität mit spezifizierter Startzeit eintragen"
+
+#: timetracker.py:112
+msgid "Enter a valid date in the format 'yyyy.mm.dd HH:MM': "
+msgstr "Gültiges Datum eintragen im Format 'yyyy.mm.dd HH:MM': "
+
+#: timetracker.py:117
+msgid "Your date is not valid, please check the format"
+msgstr "Angegebenes Datum ungültig, bitte Format überprüfen"
+
+#: timetracker.py:132
+msgid "Start new activity"
+msgstr "Neue Aktivität einstempeln"
+
+#: timetracker.py:133
+msgid "Show last logged activities"
+msgstr "Letzte gestempelte Aktivitäten anzeigen"
+
+#: timetracker.py:134
+msgid "Log activity with specified start"
+msgstr "Aktivität mit spezifizierter Startzeit eintragen"
+
+#: timetracker.py:136
+msgid "Show available activities"
+msgstr "Bekannte Aktivitäten anzeigen"
+
+#: timetracker.py:137
+msgid "Add new activity"
+msgstr "Neue Aktivität hinzufügen"
+
