@@ -12,6 +12,14 @@ def uraw_input(prompt=u""):
     import sys
     return raw_input( prompt.encode(sys.stdout.encoding) ).decode(sys.stdin.encoding)
 
+def date_is_today(d):
+    now = datetime.datetime.now()
+    if now.date()==d:
+        return True
+    else:
+        return False
+
+
 class Activity(object):
     __storm_table__ = "activities"
     id = Int(primary=True)
@@ -62,8 +70,11 @@ class Timelog:
            spent on that activity"""
         # TODO: create nicer grouping by activity name
         import time
+
         day_start = datetime.datetime( d.year, d.month, d.day,   0, 0, 0)
         day_end   = day_start + datetime.timedelta(1)
+        if date_is_today( d ):
+            day_end = datetime.datetime.now()
         day_log = self.store.find( LogEntry, LogEntry.ts > day_start, LogEntry.ts < day_end ).order_by(LogEntry.ts)
 
         start_times = [day_start] + map( lambda x: x.ts, day_log )
@@ -84,7 +95,11 @@ class Timelog:
             if activity_is_work:
                 totalwork += diff
             report.append( ( activity_is_work, diff, activity_name, details) )
-        report.append( (True, totalwork, _("Total work"), "") )
+        total_details = ""
+        if date_is_today( d ):
+            now = datetime.datetime.now()
+            total_details = _("until now (%s)") % now.strftime("%H:%M")
+        report.append( (True, totalwork, _("Total work"), total_details) )
 
         return report
 
