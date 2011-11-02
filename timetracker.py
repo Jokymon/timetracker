@@ -16,6 +16,7 @@ class Activity(object):
     __storm_table__ = "activities"
     id = Int(primary=True)
     name = Unicode()
+    is_work = Bool()
 
 class LogEntry(object):
     __storm_table__ = "timelog"
@@ -37,7 +38,7 @@ class Timelog:
 
         # TODO: also check that the existing tables have the correct data-types
         if not "activities" in tables:
-            cur.execute("create table activities (id integer primary key, name text)")
+            cur.execute("create table activities (id integer primary key, name text, is_work int)")
         if not "timelog" in tables:
             cur.execute("create table timelog (id integer primary key, activity_id integer, ts text, details text)")
         cur.close()
@@ -51,13 +52,15 @@ class Timelog:
         """Generate a list of activities for the given date d (type
            datetime.date) in the form
 
-           [ (4.0, "Activity 1", "Details"),
-             (2.0, "Activity 2", "Some more details here"),
-             (2.0, "Activity 3", "And some"),
+           [ (True,  4.0, "Activity 1", "Details"),
+             (False, 2.0, "Activity 2", "Some more details here"),
+             (True,  2.0, "Activity 3", "And some"),
            ]
 
-           Where the numbers in the first column indicates the amount of hours
+           Where the first column says if it is work time (true) or not (false)
+           and the numbers in the second column indicate the amount of hours
            spent on that activity"""
+        # TODO: create nicer grouping by activity name
         import time
         day_start = datetime.datetime( d.year, d.month, d.day,   0, 0, 0)
         day_end   = day_start + datetime.timedelta(1)
@@ -67,14 +70,21 @@ class Timelog:
         end_times   = map( lambda x: x.ts, day_log ) + [day_end]
 
         report = []
+        totalwork = 0
         for (idx, (start, end)) in enumerate(zip(start_times, end_times)):
-            act = "Freizeit"
+            activity_name = ""
+            activity_is_work = False
             details = ""
             if idx!=0:
-                act = day_log[idx-1].activity.name
-                details = day_log[idx-1].details
+                activity = day_log[idx-1].activity
+                activity_name    = activity.name
+                activity_is_work = activity.is_work
+                details          = day_log[idx-1].details
             diff = float( (end-start).seconds / 60) / 60
-            report.append( (diff, act, details) )
+            if activity_is_work:
+                totalwork += diff
+            report.append( ( activity_is_work, diff, activity_name, details) )
+        report.append( (True, totalwork, _("Total work"), "") )
 
         return report
 
@@ -97,9 +107,11 @@ class TimelogUi:
     def add_activity(self):
         print "\r"
         new_activity = uraw_input(_("New activity: "))
+        # TODO: ask whether this is a work activity or not
     
         act = Activity()
         act.name = unicode(new_activity)
+        act.is_work = True
         self.tdb.store.add(act)
         self.tdb.store.commit()
     
@@ -108,7 +120,10 @@ class TimelogUi:
         print "\r"
         print _("Known activities:")+"\r"
         for act in all:
-            print " ", act.id, act.name, "\r"
+            classification = _("spare")
+            if act.is_work:
+                classification = _("work")
+            print " %u %-10s %s\r" % ( act.id, classification, act.name)
         print "\r"
     
     def choose_activity(self):
@@ -162,7 +177,7 @@ class TimelogUi:
                     date = ""
             self.log_activity(selection[1], details, ts)
 
-    def test(self):
+    def show_month_report(self):
         now = datetime.datetime.now()
         report = self.tdb.month_report( now.year, now.month )
         for (d, r) in report:
@@ -170,8 +185,8 @@ class TimelogUi:
             print "---------------------------------------\r"
             print "%s\r" % d.strftime("%Y.%m.%d")
             for item in r:
-                if item[1]!="Freizeit":
-                    print "  %-3.2f  %s - %s\r" % item
+                if item[0]:
+                    print "  %-3.2f  %s - %s\r" % item[1:]
         print "---------------------------------------\r"
         print "\r"
 
@@ -202,7 +217,7 @@ def main():
         ('a', ui.list_activities,   _("Show available activities")),
         ('n', ui.add_activity,      _("Add new activity")),
         (' ', None, None), 
-        ('t', ui.test,              _("Show monthly report")),
+        ('t', ui.show_month_report, _("Show monthly report")),
         ]
     ).run()
 
