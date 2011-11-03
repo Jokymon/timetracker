@@ -1,6 +1,26 @@
 # -*- coding: latin-1 -*-
 import getch
 
+def uraw_input(prompt=u""):
+    """Unicode friendly version of the standard raw_input method"""
+    import sys
+    return raw_input( prompt.encode(sys.stdout.encoding) ).decode(sys.stdin.encoding)
+
+def choose_dialog(msg, options, default=None):
+    if not default:
+        default = options[0]
+    if default in options:
+        options.remove(default)
+
+    inp = uraw_input( "%s [%s],%s: " % (msg, default, ",".join(options)) )
+    while inp not in options + [default, ""]:
+        print "Your input must be one of %s or Enter for the default option" % \
+                 (",".join(options + [default]))
+        inp = uraw_input( "%s [%s],%s: " % (msg, default, ",".join(options)) )
+    if inp=="":
+        inp = default
+    return inp
+
 class Menu:
     def __init__(self, entries):
         """Creates a menu given the menu items specified in entries as follows.
@@ -87,6 +107,10 @@ if __name__=="__main__":
         else:
             print "Not deleting any item"
 
+    def operations():
+        inp = choose_dialog("Perform an operation", ["add", "del", "move"], "edit")
+        print "You choose operation %s\r" % inp
+
     def show_addresses():
         print "All addresses: ....."
 
@@ -97,6 +121,7 @@ if __name__=="__main__":
     m = Menu([
             ('1', add_address, "Add new address"),
             ('2', delete_address, "Delete an address"),
+            ('3', operations, "Fancy operations"),
             ('s', sub.run, "Submenu"),
             (' ', None, None),
             ('a', show_addresses, "Show all adresses"), ])

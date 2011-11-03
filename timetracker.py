@@ -4,13 +4,8 @@ import sqlite3
 import datetime
 import gettext
 from getch import getch
-from menu import Menu
+from menu import Menu, uraw_input, choose_dialog
 from storm.locals import *
-
-def uraw_input(prompt=u""):
-    """Unicode friendly version of the standard raw_input method"""
-    import sys
-    return raw_input( prompt.encode(sys.stdout.encoding) ).decode(sys.stdin.encoding)
 
 def date_is_today(d):
     now = datetime.datetime.now()
@@ -122,11 +117,14 @@ class TimelogUi:
     def add_activity(self):
         print "\r"
         new_activity = uraw_input(_("New activity: "))
-        # TODO: ask whether this is a work activity or not
+        classification = choose_dialog(_("Is this activity work or leasure"), ["work", "leasure"])
     
         act = Activity()
         act.name = unicode(new_activity)
-        act.is_work = True
+        if classification == "work":
+            act.is_work = True
+        else:
+            act.is_work = False
         self.tdb.store.add(act)
         self.tdb.store.commit()
     
