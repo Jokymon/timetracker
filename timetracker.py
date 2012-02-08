@@ -105,7 +105,7 @@ class Timelog:
         import calendar
         report = []
         (start_day, end_day) = calendar.monthrange(year, month)
-        for day in range( start_day, end_day+1 ):
+        for day in range( 1, end_day+1 ):
             d = datetime.date( year, month, day )
             report.append( (d, self.day_report(d)) )
         return report
