@@ -165,7 +165,7 @@ class TimelogUi:
         selection = Menu( l ).choose()
         return selection
     
-    def log_activity(self, activity_id, details, timestamp = datetime.datetime.now()):
+    def log_activity(self, activity_id, details, timestamp):
         tl = LogEntry()
         tl.activity_id = activity_id
         tl.ts = timestamp
@@ -188,7 +188,7 @@ class TimelogUi:
         selection = self.choose_activity()
         if selection!='':
             details = uraw_input(_("Details: "))
-            self.log_activity(selection[1], details)
+            self.log_activity(selection[1], details, datetime.datetime.now())
     
     def add_activity_log(self):
         print _("Log an activity with a specified start time")
