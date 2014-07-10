@@ -21,6 +21,7 @@ import sys
 import sqlite3
 import datetime
 import gettext
+import string
 from getch import getch
 from menu import Menu, uraw_input, choose_dialog
 from storm.locals import *
@@ -31,6 +32,13 @@ def date_is_today(d):
         return True
     else:
         return False
+
+
+def num_to_menu(i):
+    if i<10:
+        return str(i)
+    else:
+        return chr(i-10+ord('a'))
 
 
 class Activity(object):
@@ -161,7 +169,7 @@ class TimelogUi:
         activities = self.tdb.store.find(Activity)
         l = []
         for idx, a in enumerate(activities):
-            l.append( (str(idx+1), a.id, a.name) )
+            l.append( (num_to_menu(idx+1), a.id, a.name) )
         selection = Menu( l ).choose()
         return selection
     
